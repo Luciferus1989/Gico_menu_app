@@ -121,7 +121,6 @@ class Order(models.Model):
         ('cash', 'cash'),
         ('card', 'card'),
     ]
-
     user = models.ForeignKey(CustomUser, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
     dishes = models.ManyToManyField(MenuItem, through='Basket')
@@ -140,6 +139,6 @@ class Order(models.Model):
 class Basket(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+    quantity = models.PositiveIntegerField(default=0)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 

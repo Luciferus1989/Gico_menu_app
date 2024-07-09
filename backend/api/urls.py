@@ -1,9 +1,8 @@
 from django.urls import path, include
 from django.views.generic import TemplateView
 from rest_framework import request
-# from .views import MenuListView, MenuItemDetailView, TagView
-# from .menu.views import MenuListView, MenuItemDetailView, TagView
-from menu.views import MenuListView, MenuItemDetailView, TagView
+from .views import MenuListView, MenuItemDetailView, TagView
+
 app_name = 'api'
 
 urlpatterns = [
