@@ -10,9 +10,16 @@ from .models import (MenuItem,
 from rest_framework.views import APIView
 from .serializers import MenuItemSerializer, TagSerializer, BasketItemSerializer, OrderDetailSerializer
 from django.shortcuts import get_object_or_404
+from myauth.models import CustomUser
 
 
 class TagView(APIView):
+    """
+    API View to retrieve all tags.
+
+    Methods:
+    - get: Retrieve all tags from the database and return them serialized.
+    """
     def get(self, request, *args, **kwargs):
         tags = Tag.objects.all()
         serializer = TagSerializer(tags, many=True)
@@ -20,6 +27,16 @@ class TagView(APIView):
 
 
 class MenuListView(ListAPIView):
+    """
+    API View to list all available menu items.
+
+    Attributes:
+    - queryset: Queryset to retrieve all non-archived, available menu items.
+    - serializer_class: Serializer to use for menu items.
+
+    Methods:
+    - list: Retrieve all menu items, optionally filtered by category.
+    """
 
     queryset = MenuItem.objects.filter(archived=False, available=True)
     serializer_class = MenuItemSerializer
@@ -40,6 +57,17 @@ class MenuListView(ListAPIView):
 
 
 class MenuItemDetailView(RetrieveAPIView):
+    """
+    API View to retrieve a single menu item by its ID.
+
+    Attributes:
+    - queryset: Queryset to retrieve all menu items.
+    - serializer_class: Serializer to use for menu items.
+    - lookup_field: Field to use for looking up the menu item.
+
+    Methods:
+    - retrieve: Retrieve and return the menu item specified by the ID.
+    """
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
     lookup_field = 'id'
@@ -49,7 +77,16 @@ class MenuItemDetailView(RetrieveAPIView):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+
 class BasketAPIView(APIView):
+    """
+    API View to manage the user's basket.
+
+    Methods:
+    - get: Retrieve all items in the user's basket.
+    - post: Add items to the user's basket.
+    - delete: Remove items from the user's basket.
+    """
     serializer_class = BasketItemSerializer
 
     def get(self, request, *args, **kwargs):
@@ -119,7 +156,13 @@ class BasketAPIView(APIView):
 
 
 class OrderAPIView(APIView):
+    """
+    API View to manage user orders.
 
+    Methods:
+    - get: Retrieve all orders for the authenticated user.
+    - post: Finalize the active order for the authenticated user.
+    """
     def get(self, request, *args, **kwargs):
         customer_identifier = request.user.id
         orders = Order.objects.filter(customer=customer_identifier)
@@ -139,6 +182,18 @@ class OrderAPIView(APIView):
 
 
 class OrderDetailAPIView(RetrieveAPIView):
+    """
+    API View to retrieve and update a single order by its ID.
+
+    Attributes:
+    - queryset: Queryset to retrieve all orders.
+    - serializer_class: Serializer to use for orders.
+    - lookup_field: Field to use for looking up the order.
+
+    Methods:
+    - get: Retrieve and return the order specified by the ID.
+    - post: Update the specified order with new details.
+    """
     queryset = Order.objects.all()
     serializer_class = OrderDetailSerializer
     lookup_field = 'id'

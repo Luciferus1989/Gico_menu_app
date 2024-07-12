@@ -1,3 +1,4 @@
+import pandas as pd
 
 data = {
     "ItemMenu": [
@@ -14,7 +15,7 @@ data = {
         "GICO’S ISLAND GRILLED CHICKEN SALAD", "CHICKEN CAESAR SALAD", "Table tiramisu",
         "Mango and cardamom crème brulees", "Pandan bubble waffle"
     ],
-    "описание": [
+    "description": [
         "Panko chicken, ham, cheese, mushroom sauce with Italian herb chips, salad.",
         "Chicken seasoned bread crumb mix with Italian herb chips, salad.",
         "Deep fried panko squid rings served with Italian herb chips, salad, tartare sauce.",
@@ -57,15 +58,32 @@ data = {
         "Mango and cardamom crème brulees",
         "Pandan bubble waffle"
     ],
-    "категория": [
+    "category": [
         "Main", "Main", "Main", "Main", "Burger", "Burger", "Burger", "Burger", "Burger", "Burger",
         "Fish and Seafood", "Fish and Seafood", "Fish and Seafood", "Fish and Seafood", "Fish and Seafood",
         "Meat", "Meat", "Meat", "Meat", "Meat", "Kids Meal", "Kids Meal", "Kids Meal", "Kids Meal", "Kids Meal",
         "Side Dish", "Side Dish", "Side Dish", "Side Dish", "Side Dish", "Side Dish", "Salad", "Salad", "Salad",
         "Dessert", "Dessert", "Dessert"
     ],
-    "цена": [
+    "price": [
         26, 26, 26, 26, 25, 24, 24, 26, 25, 24, 35, 35, 35, 90, 75, 35, 37, 39, 55, 59, 17, 14, 6, 16, 14, 16, 17,
         14, 9, 9, 12, 18, 24, 26, 16, 18, 21
     ]
 }
+
+# Проверяем длину списков
+lengths = [len(data[key]) for key in data]
+print("Lengths of lists:", lengths)
+
+# Убедитесь, что все списки имеют одинаковую длину
+min_length = min(lengths)
+for key in data:
+    data[key] = data[key][:min_length]
+
+# Создаем DataFrame
+df = pd.DataFrame(data)
+
+# Сохранение в CSV файл
+csv_file_path = "menu.csv"
+df.to_csv(csv_file_path, index=False, encoding='utf-8-sig')
+

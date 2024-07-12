@@ -6,7 +6,6 @@ from django.db.models import Avg, Sum, F
 from django.utils import timezone
 from myauth.models import CustomUser
 
-
 def product_preview_directory_path(instance: "MenuItem", filename: str) -> str:
     """
     Generate the directory path for dish preview images.
