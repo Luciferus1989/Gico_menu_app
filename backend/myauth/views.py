@@ -4,8 +4,8 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from serializers import UserSerializer, AvatarSerializer, ChangePasswordSerializer
-from models import CustomUser
+from .serializers import UserSerializer, AvatarSerializer, ChangePasswordSerializer
+from .models import CustomUser
 from django.contrib.auth.models import Group
 
 

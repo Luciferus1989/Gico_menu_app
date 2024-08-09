@@ -8,7 +8,7 @@ from .models import (MenuItem,
                      Order,
                      Basket)
 from rest_framework.views import APIView
-from .serializers import MenuItemSerializer, TagSerializer, BasketItemSerializer, OrderDetailSerializer
+from .serializers import MenuItemSerializer, TagSerializer, BasketItemSerializer, OrderDetailSerializer, CategorySerializer, MenuItemManagerSerializer
 from django.shortcuts import get_object_or_404
 from myauth.models import CustomUser
 
@@ -38,13 +38,13 @@ class MenuListView(ListAPIView):
     - list: Retrieve all menu items, optionally filtered by category.
     """
 
-    queryset = MenuItem.objects.filter(archived=False, available=True)
+    queryset = MenuItem.objects.filter(available=True, archived=False)
     serializer_class = MenuItemSerializer
     # filter_backends = [DjangoFilterBackend, OrderingFilter]
 
     def list(self, request, *args, **kwargs):
         category = request.data.get("category", None)
-        queryset = MenuItem.objects.all()
+        queryset = MenuItem.objects.filter(available=True, archived=False)
         if category:
             category_instance = Category.objects.get(name=category)
             queryset = queryset.filter(category=category_instance)
@@ -218,3 +218,44 @@ class OrderDetailAPIView(RetrieveAPIView):
         print(order.payment_type)
 
         return Response({'orderId': order.id})
+
+
+class CategoryApiView(APIView):
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ItemView(APIView):
+    def post(self, request):
+        serializer = MenuItemManagerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        try:
+            item = MenuItem.objects.get(pk=pk)
+        except MenuItem.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = MenuItemSerializer(item, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        data = request.data
+        item_id = data['id']
+        try:
+            item = MenuItem.objects.get(id=item_id)
+        except MenuItem.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        item.archived = True
+        item.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+

@@ -39,7 +39,7 @@ def set_discount_5(modeladmin: admin.ModelAdmin, request: HttpRequest, queryset:
 @admin.register(MenuItem)
 class MenuItemAdmin(admin.ModelAdmin):
 
-    list_display = ('name', 'price', 'description_short', 'category', 'available', 'archived')
+    list_display = ('name', 'price', 'category', 'available', 'archived')
     ordering = ('name',)
     search_fields = ('name',)
     form_class = MenuItemForm

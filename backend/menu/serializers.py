@@ -18,12 +18,12 @@ class TagSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['name']
+        fields = ['id', 'name']
 
 
 class MenuItemSerializer(serializers.ModelSerializer):
+    category = serializers.SerializerMethodField()
     tags = TagSerializer(many=True, read_only=True)
-    category = CategorySerializer(read_only=True)
 
     class Meta:
         model = MenuItem
@@ -35,6 +35,28 @@ class MenuItemSerializer(serializers.ModelSerializer):
                   'category',
                   'tags',
                   ]
+
+    def get_category(self, obj):
+        return obj.category.name
+
+
+class MenuItemManagerSerializer(serializers.ModelSerializer):
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True, required=False)
+
+    class Meta:
+        model = MenuItem
+        fields = ['id',
+                  'name',
+                  'price',
+                  'discount',
+                  'preview',
+                  'category',
+                  'tags',
+                  ]
+
+    def get_category(self, obj):
+        return obj.category.name
 
 
 class BasketItemSerializer(serializers.ModelSerializer):

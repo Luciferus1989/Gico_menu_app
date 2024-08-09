@@ -6,6 +6,7 @@ from django.db.models import Avg, Sum, F
 from django.utils import timezone
 from myauth.models import CustomUser
 
+
 def product_preview_directory_path(instance: "MenuItem", filename: str) -> str:
     """
     Generate the directory path for dish preview images.
@@ -98,6 +99,9 @@ class MenuItem(models.Model):
             return self.description
         else:
             return self.description[:50] + '...'
+
+    def return_category_name(self):
+        return f'{self.category.name}'
 
     # def save_related(self, request, form, formsets, change):
     #     super().save_related(request, form, formsets, change)
