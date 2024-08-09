@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'frontend',
     'menu.apps.MenuConfig',
     'myauth.apps.MyauthConfig',
     'drf_spectacular',
