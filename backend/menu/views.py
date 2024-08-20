@@ -221,6 +221,13 @@ class OrderDetailAPIView(RetrieveAPIView):
 
 
 class CategoryApiView(APIView):
+    """
+    API view to retrieve the list of all categories.
+
+    Methods:
+    -------
+        Handles GET requests and returns a list of all categories in JSON format.
+    """
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
@@ -228,7 +235,35 @@ class CategoryApiView(APIView):
 
 
 class ItemView(APIView):
+    """
+    API view to manage menu items.
+
+    Methods:
+    -------
+    post(request):
+        Handles POST requests to create a new menu item.
+
+    put(request, pk):
+        Handles PUT requests to update an existing menu item by its primary key (pk).
+
+    delete(request, *args, **kwargs):
+        Handles DELETE requests to archive a menu item based on its ID.
+    """
     def post(self, request):
+        """
+        Creates a new menu item.
+
+        Parameters:
+        ----------
+        request : Request
+            The request object containing the data for the new menu item.
+
+        Returns:
+        -------
+        Response
+            A JSON response containing the created menu item data and a status code 201 if successful,
+            or the validation errors and a status code 400 if not.
+        """
         serializer = MenuItemManagerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -236,6 +271,24 @@ class ItemView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
+        """
+        Updates an existing menu item.
+
+        Parameters:
+        ----------
+        request : Request
+            The request object containing the updated data for the menu item.
+        pk : int
+            The primary key of the menu item to be updated.
+
+        Returns:
+        -------
+        Response
+            A JSON response containing the updated menu item data and a status code 200 if successful,
+            or a 404 status if the menu item is not found, or validation errors and a status code 400 if not.
+        """
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         try:
             item = MenuItem.objects.get(pk=pk)
         except MenuItem.DoesNotExist:
@@ -248,6 +301,21 @@ class ItemView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
+        """
+        Archives a menu item by setting its 'archived' field to True.
+
+        Parameters:
+        ----------
+        request : Request
+            The request object containing the ID of the menu item to be archived.
+
+        Returns:
+        -------
+        Response
+            A status code 204 if the operation is successful, or 404 if the menu item is not found.
+        """
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         data = request.data
         item_id = data['id']
         try:
