@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
@@ -37,14 +36,12 @@ class MenuListView(ListAPIView):
     Methods:
     - list: Retrieve all menu items, optionally filtered by category.
     """
-
-    queryset = MenuItem.objects.filter(available=True, archived=False)
     serializer_class = MenuItemSerializer
     # filter_backends = [DjangoFilterBackend, OrderingFilter]
 
     def list(self, request, *args, **kwargs):
         category = request.data.get("category", None)
-        queryset = MenuItem.objects.filter(available=True, archived=False)
+        queryset = MenuItem.objects.filter(archived=False, available=True)
         if category:
             category_instance = Category.objects.get(name=category)
             queryset = queryset.filter(category=category_instance)
